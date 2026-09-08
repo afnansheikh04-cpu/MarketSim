@@ -1,5 +1,6 @@
 #pragma once 
 #include <string>
+#include <optional>
 
 struct Candle
 {
@@ -9,5 +10,7 @@ struct Candle
     double high; 
     double low;
     double close; 
-    double volume;
+
+
+    std::optional<double> volume;
 };
