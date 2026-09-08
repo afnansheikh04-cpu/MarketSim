@@ -38,6 +38,10 @@
 *.exe
 *.out
 *.app
+.env
+.DS_Store
+.vscode/
+
 
 # Build directories
 build/
