@@ -12,5 +12,5 @@ struct Candle
     double close; 
 
 
-    std::optional<double> volume;
+    std::optional<double> volume; // volume may exist may not 
 };

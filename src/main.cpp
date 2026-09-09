@@ -1,23 +1,36 @@
-#include <iostream> // imports the libraries
-#include <vector>
-#include "Candle.hpp";
+#include <iostream>
+#include <cstdlib>
+
+#include "MarketDataService.hpp"
 
 int main()
 {
-    std:: vector<Candle> candles = // dynamic list containing the candles
-    {
-        {"2026-09-01", 230.0, 235.0, 228.0, 234.0, 40000000},
-        {"2026-09-02", 234.0, 238.0, 233.0, 237.0, 42000000},
-        {"2026-09-03", 237.0, 239.0, 232.0, 233.0, 39000000}
-        
-    };
+    // Get API key from the environment variable
+    const char* apiKey = std::getenv("TWELVE_DATA_API_KEY");
 
-    for( const Candle& candle : candles) // the const says we wont change the candles, the & references them only and for loop is a c++ range based loop
+    if (apiKey == nullptr)
     {
-        std:: cout << candle.timestamp
-                   << " Close: "
-                   << candle.close
-                   << '\n';
+        std::cerr << "API key not found." << '\n';
+        return 1;
     }
-    return -0;
+
+    try
+    {
+        // Create our market data service
+        MarketDataService marketData(apiKey);
+
+        // Request 3 one-minute gold candles
+        std::string response =
+            marketData.getTimeSeries("XAU/USD", "1min", 3);
+
+        // Print the raw JSON response
+        std::cout << response << '\n';
+    }
+    catch (const std::exception& error)
+    {
+        std::cerr << "Error: " << error.what() << '\n';
+        return 1;
+    }
+
+    return 0;
 }
