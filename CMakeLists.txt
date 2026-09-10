@@ -11,6 +11,7 @@ find_package(nlohmann_json CONFIG REQUIRED)
 add_executable(MarketSim
     src/main.cpp
     src/MarketDataService.cpp
+    src/CsvWriter.cpp
 ) # says: build an executable called MarketSim using the main.cpp
 
 target_include_directories(MarketSim PRIVATE include) ## ensure to look inside the include folder
