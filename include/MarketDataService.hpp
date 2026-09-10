@@ -1,14 +1,16 @@
 #pragma once
 #include <string>
+#include <vector>
+#include "Candle.hpp"
 
 class MarketDataService
 {
     public:
-        MarketDataService(const std::string & apiKey); // construcrot - pass in api key 
+        MarketDataService(const std::string & apiKey); // constructor - pass in api key 
 
-        std::string getTimeSeries( // function to fetch market data
+        std::vector<Candle> getTimeSeries( // function to fetch market data
             const std:: string & symbol, // commodity or whatever it may be 
-            const std:: string & inverval, // 1 min candle 1 day candlet etc
+            const std:: string & interval, // 1 min candle 1 day candlet etc
             int outputSize // how many candles we want from the api
         ) const; // const at the end means object wont be altered just used
 

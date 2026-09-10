@@ -20,11 +20,18 @@ int main()
         MarketDataService marketData(apiKey);
 
         // Request 3 one-minute gold candles
-        std::string response =
+        std::vector<Candle> candles =
             marketData.getTimeSeries("XAU/USD", "1min", 3);
 
-        // Print the raw JSON response
-        std::cout << response << '\n';
+        for(const Candle& candle : candles)
+        {
+            std::cout << candle.timestamp
+                      << " Open: " << candle.open
+                      <<" High: " << candle.high
+                      << " Low: " << candle.low
+                      << " Close: " << candle.close
+                      << '\n';
+        }
     }
     catch (const std::exception& error)
     {

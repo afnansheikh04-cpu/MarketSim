@@ -1,6 +1,8 @@
 #include "MarketDataService.hpp"
 #include <curl/curl.h>
 #include <stdexcept>
+#include <nlohmann/json.hpp>
+#include <algorithm>
 
 static size_t writeCallback( // data received by the api
     void* contents,
@@ -24,16 +26,12 @@ static size_t writeCallback( // data received by the api
 
 // constructor - stores the api inside the object
 MarketDataService::MarketDataService(
-    const std:: string &key // value passed into the constructor
+const std:: string &key // value passed into the constructor
 ) : apiKey(key) // init
 {
 }
 
-std:: string MarketDataService::getTimeSeries(
-    const std:: string& symbol,
-    const std:: string & interval,
-    int outputSize
-)    const
+std:: vector<Candle> MarketDataService::getTimeSeries(const std:: string& symbol,const std:: string & interval,int outputSize)    const
 {
     // create a CURL handle for the HTTP request
 
@@ -77,7 +75,36 @@ std:: string MarketDataService::getTimeSeries(
         throw std:: runtime_error( curl_easy_strerror(result));
     }
 
-    return response;
+    nlohmann::json data = nlohmann::json::parse(response); // Parse the raw JSON response
+
+    if(!data.contains("values"))
+    {
+        throw std::runtime_error("No market data returned");
+    }
+
+    std::vector< Candle>  candles; // store teh candel objects
+    
+    for(const auto& value : data["values"]) //auto finds 
+    {
+        Candle candle;
+        candle.timestamp = value["datetime"].get<std::string>();
+        candle.open = std::stod(value["open"].get<std::string>()); // stod means string to double 
+        candle.high = std::stod(value["high"].get<std::string>());
+        candle.low = std::stod(value["low"].get<std::string>());
+        candle.close = std::stod(value["close"].get<std::string>());
+
+        if(value.contains("volume"))
+        {
+            candle.volume = std::stod(value["volume"].get<std::string>());
+        }
+        candles.push_back(candle);
+
+    }
+
+    std::reverse(candles.begin(),candles.end());
+
+    return candles;
+
 
 
 }

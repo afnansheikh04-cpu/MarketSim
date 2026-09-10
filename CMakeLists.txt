@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 20) # tells CMake to use C++20 to coompie with
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(CURL REQUIRED)
-find package(nlohmann_json CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 add_executable(MarketSim
     src/main.cpp
@@ -14,4 +14,4 @@ add_executable(MarketSim
 ) # says: build an executable called MarketSim using the main.cpp
 
 target_include_directories(MarketSim PRIVATE include) ## ensure to look inside the include folder
-target_link_libraries(MarketSim PRIVATE CURL::libcurl)
+target_link_libraries(MarketSim PRIVATE CURL::libcurl nlohmann_json::nlohmann_json) # cmake find this library installed 
