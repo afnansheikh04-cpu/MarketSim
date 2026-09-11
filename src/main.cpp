@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "CsvWriter.hpp"
+#include "CsvReader.hpp"
 #include "MarketDataService.hpp"
 
 int main()
@@ -24,6 +25,9 @@ int main()
             marketData.getTimeSeries("XAU/USD", "1min", 3);
 
             CsvWriter::writeCandles("../data/XAUUSD_1min.csv", candles); // the .. at the beginning will go up one file, outside the build file
+
+        std::vector<Candle> loadedCandles = CsvReader::readCandles("../data/XAUUSD_1min.csv");
+        std:: cout << "\n Loaded from CSV: \n";
 
         for(const Candle& candle : candles)
         {
