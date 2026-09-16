@@ -3,6 +3,7 @@
 #include "CsvWriter.hpp"
 #include "CsvReader.hpp"
 #include "MarketDataService.hpp"
+#include "Indicators.hpp"
 
 int main()
 {
@@ -22,7 +23,17 @@ int main()
 
         // Request 3 one-minute gold candles
         std::vector<Candle> candles =
-            marketData.getTimeSeries("XAU/USD", "1min", 3);
+            marketData.getTimeSeries("XAU/USD", "1min", 100);
+
+            double sma20 = Indicators::calculateSMA(candles, 20);
+            double rsi14 = Indicators::calculateRSI(candles, 14);
+            std::cout <<"20-Period SMA: "
+                      << sma20
+                      << '\n';
+            
+            std::cout <<"14-Period RSI:"
+                    << rsi14
+                    << '\n';
 
             CsvWriter::writeCandles("../data/XAUUSD_1min.csv", candles); // the .. at the beginning will go up one file, outside the build file
 
