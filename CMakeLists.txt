@@ -14,6 +14,7 @@ add_executable(MarketSim
     src/CsvWriter.cpp
     src/CsvReader.cpp
     src/Indicators.cpp
+    src/TradingStrategy.cpp
 ) # says: build an executable called MarketSim using the main.cpp
 
 target_include_directories(MarketSim PRIVATE include) ## ensure to look inside the include folder
