@@ -2,10 +2,12 @@
 #include "TradingStrategy.hpp"
 #include <iostream>
 #include <vector>
+#include "Portfolio.hpp"
 
 void BacktestEngine::run(const std::vector<Candle>& candles)
 {
-    bool isLong = false; 
+    Portfolio portfolio(10000.0);
+    
 
     const std::size_t minimumCandles = 20; // need at least 20 candles for SMA
 
@@ -26,24 +28,61 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
 
         const Candle& currentCandle = history.back();
 
-        if(!isLong && signal ==  Signal::BUY)
+        if(!portfolio.isLong() && signal ==  Signal::BUY)
         {
-            isLong = true; 
-            std:: cout << currentCandle.timestamp
-                        << " BUY at: "
-                        << currentCandle.close
-                        << '\n';
+            if(portfolio.buy(currentCandle.close))
+            {
+                std:: cout << currentCandle.timestamp
+                    << " BUY at: "
+                    << currentCandle.close
+                    << '\n';
+            }
+            
+
         }
-        else if(isLong && signal == Signal::SELL)
+        else if(portfolio.isLong() && signal == Signal::SELL)
         {
-            isLong = false;
-            std:: cout << currentCandle.timestamp
-                        << " SELL at: "
-                        << currentCandle.close
-                        <<'\n';
+            
+            double entryPrice = portfolio.getEntryPrice();
+            double exitPrice = currentCandle.close;
 
 
+            if(portfolio.sell(currentCandle.close))
+            {
+                double tradePnl = exitPrice - entryPrice;
+
+                std:: cout << currentCandle.timestamp
+                    << " SELL at: "
+                    << exitPrice
+                    << " | P&L "
+                    << tradePnl
+                    <<'\n';
+
+            }
         }
     }
+    if(portfolio.isLong())
+    {
+        double entryPrice = portfolio.getEntryPrice();
+        double exitPrice = candles.back().close;
+        
+        portfolio.sell(exitPrice);
+        double tradePnl = exitPrice - entryPrice;
+
+        std::cout << candles.back().timestamp
+                  << " FINAL SELL at: "
+                  << exitPrice
+                  << " | P&L: "
+                  <<tradePnl
+                  << '\n';
+    }
+    double startingCash = 10000.0;
+    double finalCash = portfolio.getCash();
+    double totalPnl = finalCash - startingCash;
+
+    std::cout << "\n--- Backtest Summary ---\n";
+    std::cout << "Starting Cash: " << startingCash << '\n';
+    std::cout << "Final Cash: " << finalCash << '\n';
+    std::cout << "Total P&L: " << totalPnl << '\n';
     
 }

@@ -55,17 +55,17 @@ int main()
             CsvWriter::writeCandles("../data/XAUUSD_5min.csv", candles); // the .. at the beginning will go up one filder, outside the build file
 
         std::vector<Candle> loadedCandles = CsvReader::readCandles("../data/XAUUSD_5min.csv");
-        std:: cout << "\n Loaded from CSV: \n";
+        //std:: cout << "\n Loaded from CSV: \n";
 
-        for(const Candle& candle : candles)
-        {
-            std::cout << candle.timestamp
-                      << " Open: " << candle.open
-                      <<" High: " << candle.high
-                      << " Low: " << candle.low
-                      << " Close: " << candle.close
-                      << '\n';
-        }
+       // for(const Candle& candle : candles)
+        //{
+       //    std::cout << candle.timestamp
+        //              << " Open: " << candle.open
+        //              <<" High: " << candle.high
+        //              << " Low: " << candle.low
+         //             << " Close: " << candle.close
+        //              << '\n';
+        //}
     }
     catch (const std::exception& error)
     {
