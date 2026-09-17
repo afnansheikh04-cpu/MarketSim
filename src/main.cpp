@@ -5,6 +5,7 @@
 #include "MarketDataService.hpp"
 #include "Indicators.hpp"
 #include "TradingStrategy.hpp"
+#include "BacktestEngine.hpp"
 
 int main()
 {
@@ -24,7 +25,8 @@ int main()
 
         // Request 3 one-minute gold candles
         std::vector<Candle> candles =
-            marketData.getTimeSeries("XAU/USD", "1min", 100);
+            marketData.getTimeSeries("XAU/USD", "5min", 50);
+            BacktestEngine::run(candles);
             double sma20 = Indicators::calculateSMA(candles, 20);
             double rsi14 = Indicators::calculateRSI(candles, 14);
             std::cout <<"20-Period SMA: "
@@ -50,9 +52,9 @@ int main()
             {
                 std::cout << "HOLD\n";
             }
-            CsvWriter::writeCandles("../data/XAUUSD_1min.csv", candles); // the .. at the beginning will go up one file, outside the build file
+            CsvWriter::writeCandles("../data/XAUUSD_5min.csv", candles); // the .. at the beginning will go up one filder, outside the build file
 
-        std::vector<Candle> loadedCandles = CsvReader::readCandles("../data/XAUUSD_1min.csv");
+        std::vector<Candle> loadedCandles = CsvReader::readCandles("../data/XAUUSD_5min.csv");
         std:: cout << "\n Loaded from CSV: \n";
 
         for(const Candle& candle : candles)
