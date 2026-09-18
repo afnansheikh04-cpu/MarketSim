@@ -25,7 +25,7 @@ bool Portfolio::buy(double price)
 bool Portfolio::sell(double price)
 {
     // cant buy if already in a trade
-    if(longPosition)
+    if(!longPosition)
     {
         return false;
     }
