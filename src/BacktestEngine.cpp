@@ -7,12 +7,16 @@
 void BacktestEngine::run(const std::vector<Candle>& candles)
 {
     const double startingCash = 10000.0; 
-    Portfolio portfolio(10000.0);
+    const double feePerTrade = 1.0;
+    const double slippageRate = 0.0001; // 0.01%
+    Portfolio portfolio(startingCash,feePerTrade,slippageRate);
 
 
     int totalTrades =0;
     int winningTrades = 0;
     int losingTrades = 0; // used to keep track of trades
+    double peakEquity = startingCash;
+    double maxDrawdown = 0.0;
     
 
     const std::size_t minimumCandles = 20; // need at least 20 candles for SMA
@@ -44,7 +48,6 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
                     << '\n';
             }
             
-
         }
         else if(portfolio.isLong() && signal == Signal::SELL)
         {
@@ -55,7 +58,7 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
 
             if(portfolio.sell(currentCandle.close))
             {
-                double tradePnl = exitPrice - entryPrice;
+                double tradePnl = portfolio.getLastTradePnL();
 
                 totalTrades++;
                 if(tradePnl > 0)
@@ -76,6 +79,20 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
 
             }
         }
+
+        double currentEquity = portfolio.getEquity(currentCandle.close);
+        
+        if(currentEquity>peakEquity)
+        {
+            peakEquity = currentEquity;
+        }
+
+        double drawdown = ((peakEquity - currentEquity) / peakEquity) *100.0;
+
+        if(drawdown>maxDrawdown)
+        {
+            maxDrawdown = drawdown;
+        }
     }
     if(portfolio.isLong())
     {
@@ -83,7 +100,7 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
         double exitPrice = candles.back().close;
         
         portfolio.sell(exitPrice);
-        double tradePnl = exitPrice - entryPrice;
+        double tradePnl = portfolio.getLastTradePnL();
 
         totalTrades++;
         if(tradePnl>0)
@@ -101,6 +118,19 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
                   << " | P&L: "
                   <<tradePnl
                   << '\n';
+
+        double finalEquity = portfolio.getCash();
+    
+        if(finalEquity> peakEquity)
+        {
+            peakEquity = finalEquity;
+        }
+        double finalDrawdown = ((peakEquity - finalEquity) / peakEquity) *100.0;
+
+        if(finalDrawdown > maxDrawdown)
+        {
+            maxDrawdown = finalDrawdown;
+        }
     }
     
     double finalCash = portfolio.getCash();
@@ -122,5 +152,6 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
     std::cout << "Winning Trades: " << winningTrades << '\n';
     std::cout << "Losing Trades: " << losingTrades << '\n';
     std::cout << "Win Rate: " << winRate << "%\n";
+    std::cout << "Max Drawdown: " << maxDrawdown << "%\n";
     
 }
