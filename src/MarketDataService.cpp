@@ -51,6 +51,7 @@ std:: vector<Candle> MarketDataService::getTimeSeries(const std:: string& symbol
         "?symbol=" + std::string(encodedSymbol) +
         "&interval=" + interval +
         "&outputsize=" + std::to_string(outputSize) +
+        "&timezone=Europe/London" +
         "&apikey=" + apiKey; // all these parameters are added to the URL were creating
 
     curl_free(encodedSymbol); // free memory created by the curl easy escape

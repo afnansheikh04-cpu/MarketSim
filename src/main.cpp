@@ -6,6 +6,9 @@
 #include "Indicators.hpp"
 #include "TradingStrategy.hpp"
 #include "BacktestEngine.hpp"
+#include "PaperTradingEngine.hpp"
+#include <chrono>
+#include <thread>
 
 int main()
 {
@@ -22,6 +25,8 @@ int main()
     {
         // Create our market data service
         MarketDataService marketData(apiKey);
+
+        PaperTradingEngine paperTrader(10000.0, 1.0, 0.0001); // startingcash, feeperTrade, slippage
 
         // Request 3 one-minute gold candles
         std::vector<Candle> candles =
@@ -55,6 +60,30 @@ int main()
             CsvWriter::writeCandles("../data/XAUUSD_5min.csv", candles); // the .. at the beginning will go up one filder, outside the build file
 
         std::vector<Candle> loadedCandles = CsvReader::readCandles("../data/XAUUSD_5min.csv");
+
+        std:: cout << "\n---- Starting Paper Trading ------\n";
+
+        while(true)
+        {
+            {
+                try
+                {
+                    {
+                        std::vector<Candle> liveCandles = marketData.getTimeSeries("XAU/USD", "5min", 50);
+                        paperTrader.process(liveCandles);
+                    }
+                }
+                catch(const std::exception& error)
+                {
+                    std::cerr << "PaperTradingError: "
+                                << error.what()
+                                << '\n';
+                }
+
+                std::this_thread::sleep_for(std::chrono::seconds(30)); // pauses program for 30 seconds
+                
+            }
+        }
         //std:: cout << "\n Loaded from CSV: \n";
 
        // for(const Candle& candle : candles)
