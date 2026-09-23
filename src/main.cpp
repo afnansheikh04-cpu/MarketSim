@@ -10,14 +10,16 @@
 #include <chrono>
 #include <thread>
 
+using namespace std;
+
 int main()
 {
     // Get API key from the environment variable
-    const char* apiKey = std::getenv("TWELVE_DATA_API_KEY");
+    const char* apiKey = getenv("TWELVE_DATA_API_KEY");
 
     if (apiKey == nullptr)
     {
-        std::cerr << "API key not found." << '\n';
+        cerr << "API key not found." << '\n';
         return 1;
     }
 
@@ -29,39 +31,39 @@ int main()
         PaperTradingEngine paperTrader(10000.0, 1.0, 0.0001); // startingcash, feeperTrade, slippage
 
         // Request 3 one-minute gold candles
-        std::vector<Candle> candles =
+        vector<Candle> candles =
             marketData.getTimeSeries("XAU/USD", "5min", 50);
             BacktestEngine::run(candles);
             double sma20 = Indicators::calculateSMA(candles, 20);
             double rsi14 = Indicators::calculateRSI(candles, 14);
-            std::cout <<"20-Period SMA: "
+            cout <<"20-Period SMA: "
                       << sma20
                       << '\n';
-            
-            std::cout <<"14-Period RSI:"
+
+            cout <<"14-Period RSI:"
                     << rsi14
                     << '\n';
 
             Signal signal = TradingStrategy::evaluate(candles);
-            std::cout << "Signal: ";
+            cout << "Signal: ";
 
             if(signal == Signal::BUY)
             {
-                std:: cout << "Buy\n";
+                cout << "Buy\n";
             }
             if(signal == Signal::SELL)
             {
-                std:: cout << "Sell\n";
+                cout << "Sell\n";
             }
             else
             {
-                std::cout << "HOLD\n";
+                cout << "HOLD\n";
             }
             CsvWriter::writeCandles("../data/XAUUSD_5min.csv", candles); // the .. at the beginning will go up one filder, outside the build file
 
-        std::vector<Candle> loadedCandles = CsvReader::readCandles("../data/XAUUSD_5min.csv");
+        vector<Candle> loadedCandles = CsvReader::readCandles("../data/XAUUSD_5min.csv");
 
-        std:: cout << "\n---- Starting Paper Trading ------\n";
+        cout << "\n---- Starting Paper Trading ------\n";
 
         while(true)
         {
@@ -69,26 +71,26 @@ int main()
                 try
                 {
                     {
-                        std::vector<Candle> liveCandles = marketData.getTimeSeries("XAU/USD", "5min", 50);
+                        vector<Candle> liveCandles = marketData.getTimeSeries("XAU/USD", "5min", 50);
                         paperTrader.process(liveCandles);
                     }
                 }
-                catch(const std::exception& error)
+                catch(const exception& error)
                 {
-                    std::cerr << "PaperTradingError: "
+                    cerr << "PaperTradingError: "
                                 << error.what()
                                 << '\n';
                 }
 
-                std::this_thread::sleep_for(std::chrono::seconds(30)); // pauses program for 30 seconds
-                
+                this_thread::sleep_for(chrono::seconds(30)); // pauses program for 30 seconds
+
             }
         }
-        //std:: cout << "\n Loaded from CSV: \n";
+        //cout << "\n Loaded from CSV: \n";
 
        // for(const Candle& candle : candles)
         //{
-       //    std::cout << candle.timestamp
+       //    cout << candle.timestamp
         //              << " Open: " << candle.open
         //              <<" High: " << candle.high
         //              << " Low: " << candle.low
@@ -96,9 +98,9 @@ int main()
         //              << '\n';
         //}
     }
-    catch (const std::exception& error)
+    catch (const exception& error)
     {
-        std::cerr << "Error: " << error.what() << '\n';
+        cerr << "Error: " << error.what() << '\n';
         return 1;
     }
 

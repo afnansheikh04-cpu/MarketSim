@@ -3,9 +3,12 @@
 #include <vector>
 #include "Candle.hpp"
 
+using std::string;
+using std::vector;
+
 class CsvReader
 {
     public:
-        static std::vector<Candle> readCandles(const std:: string& filename); // well be usign the historical candles without copying/modify
-        
+        static vector<Candle> readCandles(const string& filename); // well be usign the historical candles without copying/modify
+
 };

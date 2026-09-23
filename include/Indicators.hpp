@@ -4,16 +4,18 @@
 
 #include "Candle.hpp"
 
+using std::vector;
+
 class Indicators
 {
 public:
     static double calculateSMA(
-        const std::vector<Candle>& candles,
+        const vector<Candle>& candles,
         int period
     );
 
     static double calculateRSI(
-        const std::vector<Candle>& candles,
+        const vector<Candle>& candles,
         int period
     );
 };

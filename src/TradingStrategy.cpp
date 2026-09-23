@@ -1,9 +1,11 @@
 #include "TradingStrategy.hpp"
 #include "Indicators.hpp"
 
-Signal TradingStrategy::evaluate( const std::vector<Candle>& candles)
+using namespace std;
+
+Signal TradingStrategy::evaluate( const vector<Candle>& candles)
 {
-    double sma20 = Indicators:: calculateSMA(candles,20); // sma of last 20 candles 
+    double sma20 = Indicators:: calculateSMA(candles,20); // sma of last 20 candles
     double rsi14 = Indicators:: calculateRSI(candles, 14); // rsi of last 14 periods
     double latestClose = candles.back().close;
 

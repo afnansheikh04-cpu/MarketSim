@@ -2,6 +2,8 @@
 #include "TradingStrategy.hpp"
 #include <iostream>
 
+using namespace std;
+
 PaperTradingEngine::PaperTradingEngine(double StartingCash, double feePerTrade, double sillpageRate)
     :portfolio(StartingCash,feePerTrade,sillpageRate)
 {}
@@ -9,15 +11,15 @@ PaperTradingEngine::PaperTradingEngine(double StartingCash, double feePerTrade, 
 
 
 
-void PaperTradingEngine::process(const std::vector<Candle>&candles)
+void PaperTradingEngine::process(const vector<Candle>&candles)
 {
     if(candles.size() <21)
     {
-        std::cout << "Not enough candles formed for paper Trading.\n";
+        cout << "Not enough candles formed for paper Trading.\n";
         return;
     }
 
-   
+
 
     const Candle& currentCandle = candles.back();
 
@@ -29,24 +31,24 @@ void PaperTradingEngine::process(const std::vector<Candle>&candles)
 
     Signal signal = TradingStrategy::evaluate(candles); // run strategy;
 
-    std::cout  << "\n"
+    cout  << "\n"
                << currentCandle.timestamp
                << " | Close: "
                << currentCandle.close
                << '\n';
-            
+
     if(!portfolio.isLong() && signal == Signal::BUY)
     {
         if(portfolio.buy(currentCandle.close))
         {
-            std::cout << "Paper Trade: BUY\n";
+            cout << "Paper Trade: BUY\n";
         }
     }
     else if(portfolio.isLong() && signal == Signal::SELL)
     {
         if(portfolio.sell(currentCandle.close))
         {
-            std::cout << "Paper Trade: SELL"
+            cout << "Paper Trade: SELL"
                      << " | P&L: "
                      << portfolio.getLastTradePnL()
                      << '\n';
@@ -54,14 +56,14 @@ void PaperTradingEngine::process(const std::vector<Candle>&candles)
     }
     else
     {
-        std::cout << "Paper Trade: HOLD\n";
+        cout << "Paper Trade: HOLD\n";
     }
 
-    std::cout << "Position: "
+    cout << "Position: "
               << (portfolio.isLong() ? "LONG" : "FLAT")
               << '\n';
-              
-    std::cout << "Equity: "
+
+    cout << "Equity: "
               << portfolio.getEquity(currentCandle.close)
               << '\n';
 }

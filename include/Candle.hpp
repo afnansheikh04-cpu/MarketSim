@@ -1,16 +1,19 @@
-#pragma once 
+#pragma once
 #include <string>
 #include <optional>
 
+using std::optional;
+using std::string;
+
 struct Candle
 {
-    std::string timestamp;
+    string timestamp;
 
     double open;
-    double high; 
+    double high;
     double low;
-    double close; 
+    double close;
 
 
-    std::optional<double> volume; // volume may exist may not 
+    optional<double> volume; // volume may exist may not
 };

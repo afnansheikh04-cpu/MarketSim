@@ -4,12 +4,15 @@
 #include "Candle.hpp"
 #include "Portfolio.hpp"
 
+using std::string;
+using std::vector;
+
 class PaperTradingEngine
 {
     public: PaperTradingEngine(double startingCash, double feePerTrade, double slippageRate);
 
-    void process(const std::vector<Candle>&candles);
+    void process(const vector<Candle>&candles);
 
-    private : Portfolio portfolio; 
-    std:: string lastProcessedTimestamp;
+    private : Portfolio portfolio;
+    string lastProcessedTimestamp;
 };

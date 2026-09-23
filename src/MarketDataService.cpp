@@ -4,16 +4,18 @@
 #include <nlohmann/json.hpp>
 #include <algorithm>
 
+using namespace std;
+
 static size_t writeCallback( // data received by the api
     void* contents,
     size_t size,
-    size_t nmemb, 
+    size_t nmemb,
     void* userData
 )
 {
     size_t totalSize = size * nmemb; // calcuatles total number of bytes received in this chunk
 
-    std:: string* response = static_cast<std::string*>(userData); // convert userdata into a string
+    string* response = static_cast<string*>(userData); // convert userdata into a string
 
     response-> append( // appends the received data into the response string
         static_cast<char*>(contents),
@@ -26,12 +28,12 @@ static size_t writeCallback( // data received by the api
 
 // constructor - stores the api inside the object
 MarketDataService::MarketDataService(
-const std:: string &key // value passed into the constructor
+const string &key // value passed into the constructor
 ) : apiKey(key) // init
 {
 }
 
-std:: vector<Candle> MarketDataService::getTimeSeries(const std:: string& symbol,const std:: string & interval,int outputSize)    const
+vector<Candle> MarketDataService::getTimeSeries(const string& symbol,const string & interval,int outputSize)    const
 {
     // create a CURL handle for the HTTP request
 
@@ -39,18 +41,18 @@ std:: vector<Candle> MarketDataService::getTimeSeries(const std:: string& symbol
 
     if(!curl)
     {
-        throw std:: runtime_error("Failed to initialise CURL");
+        throw runtime_error("Failed to initialise CURL");
     }
 
-    std:: string response; // this hodls the json response from the api 
+    string response; // this hodls the json response from the api
 
     char* encodedSymbol = curl_easy_escape(curl, symbol.c_str(), 0); // encode symbols inside the URL
-    
-    std:: string url = 
+
+    string url =
         "https://api.twelvedata.com/time_series"
-        "?symbol=" + std::string(encodedSymbol) +
+        "?symbol=" + string(encodedSymbol) +
         "&interval=" + interval +
-        "&outputsize=" + std::to_string(outputSize) +
+        "&outputsize=" + to_string(outputSize) +
         "&timezone=Europe/London" +
         "&apikey=" + apiKey; // all these parameters are added to the URL were creating
 
@@ -73,36 +75,36 @@ std:: vector<Candle> MarketDataService::getTimeSeries(const std:: string& symbol
 
     if(result != CURLE_OK)
     {
-        throw std:: runtime_error( curl_easy_strerror(result));
+        throw runtime_error( curl_easy_strerror(result));
     }
 
     nlohmann::json data = nlohmann::json::parse(response); // Parse the raw JSON response
 
     if(!data.contains("values"))
     {
-        throw std::runtime_error("No market data returned");
+        throw runtime_error("No market data returned");
     }
 
-    std::vector< Candle>  candles; // store teh candel objects
-    
-    for(const auto& value : data["values"]) //auto finds 
+    vector< Candle>  candles; // store teh candel objects
+
+    for(const auto& value : data["values"]) //auto finds
     {
         Candle candle;
-        candle.timestamp = value["datetime"].get<std::string>();
-        candle.open = std::stod(value["open"].get<std::string>()); // stod means string to double 
-        candle.high = std::stod(value["high"].get<std::string>());
-        candle.low = std::stod(value["low"].get<std::string>());
-        candle.close = std::stod(value["close"].get<std::string>());
+        candle.timestamp = value["datetime"].get<string>();
+        candle.open = stod(value["open"].get<string>()); // stod means string to double
+        candle.high = stod(value["high"].get<string>());
+        candle.low = stod(value["low"].get<string>());
+        candle.close = stod(value["close"].get<string>());
 
         if(value.contains("volume"))
         {
-            candle.volume = std::stod(value["volume"].get<std::string>());
+            candle.volume = stod(value["volume"].get<string>());
         }
         candles.push_back(candle);
 
     }
 
-    std::reverse(candles.begin(),candles.end());
+    reverse(candles.begin(),candles.end());
 
     return candles;
 

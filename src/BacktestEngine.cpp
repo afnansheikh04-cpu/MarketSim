@@ -4,9 +4,11 @@
 #include <vector>
 #include "Portfolio.hpp"
 
-void BacktestEngine::run(const std::vector<Candle>& candles)
+using namespace std;
+
+void BacktestEngine::run(const vector<Candle>& candles)
 {
-    const double startingCash = 10000.0; 
+    const double startingCash = 10000.0;
     const double feePerTrade = 1.0;
     const double slippageRate = 0.0001; // 0.01%
     Portfolio portfolio(startingCash,feePerTrade,slippageRate);
@@ -17,20 +19,20 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
     int losingTrades = 0; // used to keep track of trades
     double peakEquity = startingCash;
     double maxDrawdown = 0.0;
-    
 
-    const std::size_t minimumCandles = 20; // need at least 20 candles for SMA
+
+    const size_t minimumCandles = 20; // need at least 20 candles for SMA
 
     if(candles.size() < minimumCandles)
     {
-        std::cout << "Not enough Candles to run Backtest. \n";
+        cout << "Not enough Candles to run Backtest. \n";
         return;
     }
 
-    for(std::size_t i=minimumCandles; i<=candles.size(); i++)
+    for(size_t i=minimumCandles; i<=candles.size(); i++)
     {
-        std::vector<Candle> history(candles.begin(),
-        candles.begin() + static_cast<std::ptrdiff_t>(i)) ;//create new vector of only old candles after each candle
+        vector<Candle> history(candles.begin(),
+        candles.begin() + static_cast<ptrdiff_t>(i)) ;//create new vector of only old candles after each candle
         //containing the candles in there so far
         // candles.begin() points to the first element in the vecor
 
@@ -42,16 +44,16 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
         {
             if(portfolio.buy(currentCandle.close))
             {
-                std:: cout << currentCandle.timestamp
+                cout << currentCandle.timestamp
                     << " BUY at: "
                     << currentCandle.close
                     << '\n';
             }
-            
+
         }
         else if(portfolio.isLong() && signal == Signal::SELL)
         {
-            
+
             double entryPrice = portfolio.getEntryPrice();
             double exitPrice = currentCandle.close;
 
@@ -70,7 +72,7 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
                     losingTrades++;
                 }
 
-                std:: cout << currentCandle.timestamp
+                cout << currentCandle.timestamp
                     << " SELL at: "
                     << exitPrice
                     << " | P&L "
@@ -81,7 +83,7 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
         }
 
         double currentEquity = portfolio.getEquity(currentCandle.close);
-        
+
         if(currentEquity>peakEquity)
         {
             peakEquity = currentEquity;
@@ -98,7 +100,7 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
     {
         double entryPrice = portfolio.getEntryPrice();
         double exitPrice = candles.back().close;
-        
+
         portfolio.sell(exitPrice);
         double tradePnl = portfolio.getLastTradePnL();
 
@@ -112,7 +114,7 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
             losingTrades++;
         }
 
-        std::cout << candles.back().timestamp
+        cout << candles.back().timestamp
                   << " FINAL SELL at: "
                   << exitPrice
                   << " | P&L: "
@@ -120,7 +122,7 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
                   << '\n';
 
         double finalEquity = portfolio.getCash();
-    
+
         if(finalEquity> peakEquity)
         {
             peakEquity = finalEquity;
@@ -132,7 +134,7 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
             maxDrawdown = finalDrawdown;
         }
     }
-    
+
     double finalCash = portfolio.getCash();
     double totalPnl = finalCash - startingCash;
     double totalReturn = (totalPnl / startingCash) *100;
@@ -143,15 +145,15 @@ void BacktestEngine::run(const std::vector<Candle>& candles)
         winRate = (static_cast<double>(winningTrades) / totalTrades) *100; // static cast double turns int into double
     }
 
-    std::cout << "\n--- Backtest Summary ---\n";
-    std::cout << "Starting Cash: " << startingCash << '\n';
-    std::cout << "Final Cash: " << finalCash << '\n';
-    std::cout << "Total P&L: " << totalPnl << '\n';
-    std::cout << "Total Return: " << totalReturn << "%\n";
-    std::cout << "Total Trades: " << totalTrades << '\n';
-    std::cout << "Winning Trades: " << winningTrades << '\n';
-    std::cout << "Losing Trades: " << losingTrades << '\n';
-    std::cout << "Win Rate: " << winRate << "%\n";
-    std::cout << "Max Drawdown: " << maxDrawdown << "%\n";
-    
+    cout << "\n--- Backtest Summary ---\n";
+    cout << "Starting Cash: " << startingCash << '\n';
+    cout << "Final Cash: " << finalCash << '\n';
+    cout << "Total P&L: " << totalPnl << '\n';
+    cout << "Total Return: " << totalReturn << "%\n";
+    cout << "Total Trades: " << totalTrades << '\n';
+    cout << "Winning Trades: " << winningTrades << '\n';
+    cout << "Losing Trades: " << losingTrades << '\n';
+    cout << "Win Rate: " << winRate << "%\n";
+    cout << "Max Drawdown: " << maxDrawdown << "%\n";
+
 }
