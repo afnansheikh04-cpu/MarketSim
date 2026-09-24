@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>MarketSim</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script
+        src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js">
+    </script>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">M</div>
+
+            <div>
+                <h1>MarketSim</h1>
+                <span>Trading Simulator</span>
+            </div>
+        </div>
+
+        <nav class="nav">
+
+            <button class="nav-item active">
+                <span>▦</span>
+                Dashboard
+            </button>
+
+            <button class="nav-item">
+                <span>⌁</span>
+                Markets
+            </button>
+
+            <button class="nav-item">
+                <span>▶</span>
+                Backtester
+            </button>
+
+            <button class="nav-item">
+                <span>⌘</span>
+                Strategies
+            </button>
+
+            <button class="nav-item">
+                <span>◎</span>
+                Paper Trading
+            </button>
+
+            <button class="nav-item">
+                <span>◫</span>
+                Analytics
+            </button>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="connection">
+                <div class="status-dot"></div>
+
+                <div>
+                    <span>Market Data</span>
+                    <strong>Connected</strong>
+                </div>
+            </div>
+
+            <button class="nav-item">
+                <span>⚙</span>
+                Settings
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <header class="topbar">
+
+            <div>
+                <h2>Trading Dashboard</h2>
+                <p>Live market monitoring & strategy testing</p>
+            </div>
+
+            <div class="top-actions">
+
+                <div class="market-status">
+                    <span class="status-dot"></span>
+                    LIVE
+                </div>
+
+                <button class="secondary-button">
+                    Paper Mode
+                </button>
+
+                <div class="avatar">
+                    AS
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- METRIC CARDS -->
+        <section class="metrics">
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Portfolio Equity
+                </div>
+
+                <div class="metric-value" id="portfolioValue">£10,000.00</div>
+
+                <div class="metric-change positive">
+                    +0.00%
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Total Return
+                </div>
+
+                <div class="metric-value positive" id="totalReturn">+0.00%</div>
+
+                <div class="metric-sub">
+                    Current strategy
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Win Rate
+                </div>
+
+                <div class="metric-value" id="winRate">0%</div>
+
+                <div class="metric-sub">
+                    Backtest result
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Max Drawdown
+                </div>
+
+                <div class="metric-value negative" id="drawdown">0.00%</div>
+
+                <div class="metric-sub">
+                    Peak-to-trough
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- TOP CONTENT -->
+        <section class="dashboard-grid">
+
+            <!-- CHART -->
+            <div class="panel chart-panel">
+
+                <div class="chart-header">
+
+                    <div class="symbol-area">
+
+                        <div class="asset-icon">
+                            XAU
+                        </div>
+
+                        <div>
+                            <div class="symbol">
+                                XAU / USD
+                            </div>
+
+                            <div class="asset-name">
+                                Gold / US Dollar
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="chart-toolbar">
+
+                        <button class="time-button">1m</button>
+                        <button class="time-button active">5m</button>
+                        <button class="time-button">15m</button>
+                        <button class="time-button">1h</button>
+                        <button class="time-button">4h</button>
+
+                        <button class="indicator-button">
+                            Indicators
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="price-strip">
+
+                    <div>
+                        <span>OPEN</span>
+                        <strong id="openPrice">4312.50</strong>
+                    </div>
+
+                    <div>
+                        <span>HIGH</span>
+                        <strong id="highPrice">4318.40</strong>
+                    </div>
+
+                    <div>
+                        <span>LOW</span>
+                        <strong id="lowPrice">4309.20</strong>
+                    </div>
+
+                    <div>
+                        <span>CLOSE</span>
+                        <strong
+                            id="closePrice"
+                            class="positive">4316.80</strong>
+                    </div>
+
+                </div>
+
+
+                <div id="chart"></div>
+
+            </div>
+
+
+            <!-- RIGHT SIDE -->
+            <div class="right-column">
+
+                <div class="panel signal-panel">
+
+                    <div class="panel-heading">
+
+                        <div>
+                            <span class="eyebrow">
+                                CURRENT SIGNAL
+                            </span>
+
+                            <h3>Trading Strategy</h3>
+                        </div>
+
+                        <div
+                            class="signal-badge hold"
+                            id="signalBadge">HOLD</div>
+
+                    </div>
+
+
+                    <div class="signal-stats">
+
+                        <div>
+                            <span>Latest Close</span>
+                            <strong id="latestClose">4316.80</strong>
+                        </div>
+
+                        <div>
+                            <span>SMA 20</span>
+                            <strong id="smaValue">4314.86</strong>
+                        </div>
+
+                        <div>
+                            <span>RSI 14</span>
+                            <strong id="rsiValue">35.55</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel position-panel">
+
+                    <div class="panel-heading">
+
+                        <div>
+                            <span class="eyebrow">
+                                PAPER TRADING
+                            </span>
+
+                            <h3>Open Position</h3>
+                        </div>
+
+                        <span class="position-status">
+                            FLAT
+                        </span>
+
+                    </div>
+
+
+                    <div class="position-row">
+                        <span>Position</span>
+                        <strong>None</strong>
+                    </div>
+
+                    <div class="position-row">
+                        <span>Entry Price</span>
+                        <strong>—</strong>
+                    </div>
+
+                    <div class="position-row">
+                        <span>Unrealised P&L</span>
+                        <strong>£0.00</strong>
+                    </div>
+
+                    <button class="paper-button">
+                        Start Paper Trading
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- BACKTEST -->
+        <section class="panel backtest-panel">
+
+            <div class="backtest-header">
+
+                <div>
+
+                    <span class="eyebrow">
+                        STRATEGY TESTER
+                    </span>
+
+                    <h3>Backtesting</h3>
+
+                </div>
+
+
+                <div class="backtest-controls">
+
+                    <select id="strategySelect">
+                        <option>SMA + RSI Strategy</option>
+                    </select>
+
+                    <select>
+                        <option>XAU/USD</option>
+                    </select>
+
+                    <select>
+                        <option>5 Minute</option>
+                    </select>
+
+                    <button
+                        id="runBacktest"
+                        class="run-button">
+                        ▶ Run Backtest
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="backtest-content">
+
+                <div class="results-section">
+
+                    <div class="mini-metrics">
+
+                        <div>
+                            <span>Total P&L</span>
+                            <strong
+                                id="resultPnl"
+                                class="negative">-£23.21</strong>
+                        </div>
+
+                        <div>
+                            <span>Total Trades</span>
+                            <strong id="resultTrades">5</strong>
+                        </div>
+
+                        <div>
+                            <span>Winning Trades</span>
+                            <strong id="resultWinners">0</strong>
+                        </div>
+
+                        <div>
+                            <span>Win Rate</span>
+                            <strong id="resultWinRate">0%</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="equity-heading">
+                        <div>
+                            <h4>Equity Curve</h4>
+                            <span>
+                                Portfolio performance
+                            </span>
+                        </div>
+                    </div>
+
+                    <div id="equityChart"></div>
+
+                </div>
+
+
+                <!-- TRADE TABLE -->
+                <div class="trade-log">
+
+                    <div class="trade-log-header">
+
+                        <div>
+                            <h4>Recent Trades</h4>
+                            <span>
+                                Latest backtest activity
+                            </span>
+                        </div>
+
+                        <button>
+                            View all
+                        </button>
+
+                    </div>
+
+
+                    <table>
+
+                        <thead>
+                        <tr>
+                            <th>TIME</th>
+                            <th>SIDE</th>
+                            <th>PRICE</th>
+                            <th>P&L</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="tradeTable">
+
+                        <tr>
+                            <td>19:05</td>
+                            <td>
+                                <span class="sell">
+                                    SELL
+                                </span>
+                            </td>
+                            <td>4319.09</td>
+                            <td class="negative">
+                                -£4.03
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>19:25</td>
+                            <td>
+                                <span class="sell">
+                                    SELL
+                                </span>
+                            </td>
+                            <td>4317.59</td>
+                            <td class="negative">
+                                -£4.57
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>20:10</td>
+                            <td>
+                                <span class="sell">
+                                    SELL
+                                </span>
+                            </td>
+                            <td>4315.75</td>
+                            <td class="negative">
+                                -£5.45
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
